@@ -55,6 +55,11 @@
 
 
 
+	/**
+	 * Get the next and previous lessons that are not modules
+	 * @param  number $post_id The current lesson ID
+	 * @return array           The next and previous lessons
+	 */
 	function gmt_courses_get_next_and_previous_lessons( $post_id ) {
 
 		// Variables

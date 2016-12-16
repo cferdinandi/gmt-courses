@@ -1,5 +1,6 @@
 <?php
 
+
 	/**
 	 * Create the metaboxes
 	 */
@@ -16,10 +17,6 @@
 
 		// Reorder and organize all lessons for a course
 		add_meta_box( 'gmt_courses_metabox_lessons', __( 'Lessons', 'gmt_courses' ), 'gmt_courses_render_metabox_lessons', 'gmt_courses', 'normal', 'default');
-
-		// Pick the downloads that have access to this course
-		// @todo move to another plugin
-		// add_meta_box( 'gmt_courses_metabox_downloads', __( 'Downloads', 'gmt_courses' ), 'gmt_courses_render_metabox_downloads', 'gmt_courses', 'side', 'default');
 
 	}
 	add_action( 'add_meta_boxes', 'gmt_courses_create_metaboxes' );
@@ -129,7 +126,7 @@
 				<?php foreach( $courses as $course ) : ?>
 
 					<label>
-						<input type="radio" name="gmt_courses_course" value="<?php echo $course->ID; ?>" <?php checked( $the_course, $course->ID ); ?>>
+						<input type="checkbox" name="gmt_courses_course_<?php echo $course->ID; ?>" value="<?php echo $course->ID; ?>" <?php if ( get_post_meta( $post->ID, 'gmt_courses_course_' . $course->ID, true ) === 'on' ) { echo 'checked'; } ?>>
 						<?php echo $course->post_title; ?>
 					</label>
 					<br>
@@ -158,7 +155,7 @@
 
 			<fieldset class="list-modules">
 
-				<p>Drag-and-drop modules and lessons to reorder them.</p>
+				<p><?php _e( 'Drag-and-drop modules and lessons to reorder them.', 'gmt_courses' ); ?></p>
 
 				<ul class="list-lessons">
 					<?php foreach( $lessons as $lesson ) : ?>
@@ -184,48 +181,6 @@
 		<?php
 
 		wp_nonce_field( 'gmt_courses_metabox_lessons_nonce', 'gmt_courses_metabox_lessons_process' );
-
-	}
-
-
-
-	/**
-	 * Render the downloads metabox
-	 */
-	function gmt_courses_render_metabox_downloads() {
-
-		// Variables
-		global $post;
-		$downloads = get_posts(array(
-			'posts_per_page'   => -1,
-			'post_type'        => 'download',
-			'post_status'      => 'any',
-		));
-		$access = get_post_meta( $post->ID, 'gmt_courses_downloads', true );
-
-		?>
-
-			<fieldset>
-
-				<p>The downloads that have access to this course.</p>
-
-				<?php foreach( $downloads as $download ) : ?>
-					<?php
-						$checked = is_array($access) && array_key_exists($download->ID, $access) && $access[$download->ID] === 'on' ? 'checked' : '';
-					?>
-
-					<label>
-						<input type="checkbox" name="gmt_courses_downloads[<?php echo $download->ID; ?>]" value="<?php echo $download->ID; ?>" <?php echo $checked; ?>>
-						<?php echo $download->post_title; ?>
-					</label>
-
-				<?php endforeach; ?>
-
-			</fieldset>
-
-		<?php
-
-		wp_nonce_field( 'gmt_courses_metabox_downloads_nonce', 'gmt_courses_metabox_downloads_process' );
 
 	}
 
@@ -308,8 +263,26 @@
 		}
 
 		// Sanitize and save details
-		if ( !isset( $_POST['gmt_courses_course'] ) ) return;
-		update_post_meta( $post->ID, 'gmt_courses_course', $_POST['gmt_courses_course'] );
+		// if ( !isset( $_POST['gmt_courses_course'] ) ) return;
+		// update_post_meta( $post->ID, 'gmt_courses_course', $_POST['gmt_courses_course'] );
+
+		// Get all courses
+		$courses = get_posts(array(
+			'posts_per_page'   => -1,
+			'post_type'        => 'gmt_courses',
+			'post_status'      => 'any',
+			'orderby'          => 'menu_order',
+			'order'            => 'ASC',
+		));
+
+		// Sanitize and save details
+		foreach( $courses as $course ) {
+			if ( isset( $_POST['gmt_courses_course_' . $course->ID] ) ) {
+				update_post_meta( $post->ID, 'gmt_courses_course_' . $course->ID, 'on' );
+			} else {
+				delete_post_meta( $post->ID, 'gmt_courses_course_' . $course->ID );
+			}
+		}
 
 	}
 	add_action( 'save_post', 'gmt_courses_save_metabox_course', 10, 2 );
@@ -356,46 +329,6 @@
 
 	}
 	add_action( 'save_post', 'gmt_courses_save_metabox_lessons', 10, 2 );
-
-
-
-	/**
-	 * Save the course downloads metabox
-	 * @param  Number $post_id The post ID
-	 * @param  Array  $post    The post data
-	 */
-	function gmt_courses_save_metabox_downloads( $post_id, $post ) {
-
-		if ( wp_is_post_revision( $post_id ) ) return;
-
-		if ( !isset( $_POST['gmt_courses_metabox_downloads_process'] ) ) return;
-
-		// Verify data came from edit screen
-		if ( !wp_verify_nonce( $_POST['gmt_courses_metabox_downloads_process'], 'gmt_courses_metabox_downloads_nonce' ) ) {
-			return $post->ID;
-		}
-
-		// Verify user has permission to edit post
-		if ( !current_user_can( 'edit_post', $post->ID )) {
-			return $post->ID;
-		}
-
-		// Get downloads list
-		$downloads = get_posts(array(
-			'posts_per_page'   => -1,
-			'post_type'        => 'download',
-			'post_status'      => 'any',
-		));
-
-		// Sanitize and save details
-		$santized = array();
-		foreach( $downloads as $download ) {
-			$sanitized[$download->ID] = isset( $_POST['gmt_courses_downloads'][$download->ID] ) ? 'on' : 'off';
-		}
-		update_post_meta( $post->ID, 'gmt_courses_downloads', $sanitized );
-
-	}
-	add_action( 'save_post', 'gmt_courses_save_metabox_downloads', 10, 2 );
 
 
 

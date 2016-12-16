@@ -12,8 +12,8 @@
 			'posts_per_page'   => -1,
 			'post_type'        => 'gmt_lessons',
 			'post_status'      => ( $any ? 'any' : 'publish' ),
-			'meta_key'         => 'gmt_courses_course',
-			'meta_value'       => $course_id,
+			'meta_key'         => 'gmt_courses_course_' . $course_id,
+			'meta_value'       => 'on',
 			'orderby'          => 'menu_order',
 			'order'            => 'ASC',
 		));

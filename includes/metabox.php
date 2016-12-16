@@ -59,28 +59,43 @@
 
 
 	/**
+	 * Create an extendable list of lesson types
+	 * @return [type] [description]
+	 */
+	function gmt_courses_get_lesson_types() {
+		$types = array(
+			'lesson' => __( 'Lesson', 'gmt_courses' ),
+			'module' => __( 'Lesson', 'gmt_courses' ),
+		);
+
+		return apply_filters( 'gmt_courses_get_lesson_types', $types );
+	}
+
+
+
+	/**
 	 * Render the lesson type metabox
 	 */
 	function gmt_courses_render_metabox_lesson_type() {
 
 		// Variables
 		global $post;
-		$type = get_post_meta( $post->ID, 'gmt_courses_lesson_type', true );
+		$lesson_type = get_post_meta( $post->ID, 'gmt_courses_lesson_type', true );
+		$types = gmt_courses_get_lesson_types();
 
 		?>
 
 			<fieldset>
 
-				<label>
-					<input type="radio" name="gmt_courses_lesson_type" value="lesson" <?php checked( $type, 'lesson' ); checked( $type, '' ); ?>>
-					<?php _e( 'Lesson', 'gmt_courses' ); ?>
-				</label>
-				<br>
+				<?php foreach( $types as $key => $type ) : ?>
 
-				<label>
-					<input type="radio" name="gmt_courses_lesson_type" value="module" <?php checked( $type, 'module' ); ?>>
-					<?php _e( 'Module', 'gmt_courses' ); ?>
-				</label>
+					<label>
+						<input type="radio" name="gmt_courses_lesson_type" value="<?php echo $key; ?>" <?php checked( $lesson_type, $key ); if ( $key === 'lesson' ) { checked( $lesson_type, '' ); } ?>>
+						<?php echo $type; ?>
+					</label>
+					<br>
+
+				<?php endforeach; ?>
 
 			</fieldset>
 

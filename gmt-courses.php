@@ -5,7 +5,7 @@
  * Plugin URI: https://github.com/cferdinandi/gmt-courses/
  * GitHub Plugin URI: https://github.com/cferdinandi/gmt-courses/
  * Description: A simple WordPress course plugin.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Chris Ferdinandi
  * Author URI: http://gomakethings.com
  * Text Domain: gmt_courses
@@ -26,7 +26,6 @@ require_once( plugin_dir_path( __FILE__ ) . 'includes/metabox.php' );
 function gmt_courses_flush_rewrites() {
 	gmt_courses_add_custom_post_type_lessons();
 	gmt_courses_add_custom_post_type_courses();
-	gmt_courses_add_custom_post_type_modules();
 	flush_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );

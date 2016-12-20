@@ -2,6 +2,23 @@
 
 
 	/**
+	 * Get all of the courses
+	 * @param  boolean $any If true, get all courses (including unpublished)
+	 * @return [type]       [description]
+	 */
+	function gmt_courses_get_courses( $any = false ) {
+		return get_posts(array(
+			'posts_per_page'   => -1,
+			'post_type'        => 'gmt_courses',
+			'post_status'      => ( $any ? 'any' : 'publish' ),
+			'orderby'          => 'menu_order',
+			'order'            => 'ASC',
+		));
+	}
+
+
+
+	/**
 	 * Get all of the lessons associated with a course
 	 * @param  number  $module_id The course ID
 	 * @param  boolean $any       If true, get all lessons (including unpublished)
@@ -12,8 +29,8 @@
 			'posts_per_page'   => -1,
 			'post_type'        => 'gmt_lessons',
 			'post_status'      => ( $any ? 'any' : 'publish' ),
-			'meta_key'         => 'gmt_courses_course_' . $course_id,
-			'meta_value'       => 'on',
+			'meta_key'         => 'gmt_courses_course',
+			'meta_value'       => $course_id,
 			'orderby'          => 'menu_order',
 			'order'            => 'ASC',
 		));
@@ -74,13 +91,43 @@
 			}
 		}
 
-		if ( empty( $current ) ) return;
-
-
+		if ( is_null( $current ) ) return;
 
 		return array(
 			'next' => gmt_courses_get_next_lesson( $lessons, $current ),
 			'previous' => gmt_courses_get_previous_lesson( $lessons, $current ),
 		);
 
+	}
+
+
+
+	/**
+	 * Get the first lesson in a course that isn't a module
+	 * @todo   Make sure the first lessons isn't a module...
+	 * @param  number  $module_id The course ID
+	 * @param  boolean $any       If true, get all lessons (including unpublished)
+	 * @return object             The course
+	 */
+	function gmt_courses_get_first_lesson( $course_id, $any = false ) {
+		$lessons = gmt_courses_get_lessons( $course_id, $any );
+		foreach( $lessons as $lesson ) {
+			if ( get_post_meta( $lesson->ID, 'gmt_courses_lesson_type', true ) === 'lesson' ) return $lesson;
+		}
+	}
+
+
+
+	/**
+	 * Get the first module in a course
+	 * @todo   Make sure the first lessons isn't a module...
+	 * @param  number  $module_id The course ID
+	 * @param  boolean $any       If true, get all lessons (including unpublished)
+	 * @return object             The course
+	 */
+	function gmt_courses_get_first_module( $course_id, $any = false ) {
+		$lessons = gmt_courses_get_lessons( $course_id, $any );
+		foreach( $lessons as $lesson ) {
+			if ( get_post_meta( $lesson->ID, 'gmt_courses_lesson_type', true ) === 'module' ) return $lesson;
+		}
 	}

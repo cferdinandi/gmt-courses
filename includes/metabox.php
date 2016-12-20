@@ -126,7 +126,7 @@
 				<?php foreach( $courses as $course ) : ?>
 
 					<label>
-						<input type="checkbox" name="gmt_courses_course_<?php echo $course->ID; ?>" value="<?php echo $course->ID; ?>" <?php if ( get_post_meta( $post->ID, 'gmt_courses_course_' . $course->ID, true ) === 'on' ) { echo 'checked'; } ?>>
+						<input type="radio" name="gmt_courses_course" value="<?php echo $course->ID; ?>" <?php checked( $course->ID, $the_course ); ?>>
 						<?php echo $course->post_title; ?>
 					</label>
 					<br>
@@ -276,13 +276,8 @@
 		));
 
 		// Sanitize and save details
-		foreach( $courses as $course ) {
-			if ( isset( $_POST['gmt_courses_course_' . $course->ID] ) ) {
-				update_post_meta( $post->ID, 'gmt_courses_course_' . $course->ID, 'on' );
-			} else {
-				delete_post_meta( $post->ID, 'gmt_courses_course_' . $course->ID );
-			}
-		}
+		if ( !isset( $_POST['gmt_courses_course'] ) ) return;
+		update_post_meta( $post->ID, 'gmt_courses_course', wp_filter_nohtml_kses( $_POST['gmt_courses_course'] ) );
 
 	}
 	add_action( 'save_post', 'gmt_courses_save_metabox_course', 10, 2 );

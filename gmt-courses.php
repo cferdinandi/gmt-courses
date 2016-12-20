@@ -17,7 +17,6 @@
 require_once( plugin_dir_path( __FILE__ ) . 'includes/utilities.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'includes/cpt.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'includes/metabox.php' );
-// require_once( plugin_dir_path( __FILE__ ) . 'includes/shortcode.php' );
 
 
 /**

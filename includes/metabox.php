@@ -168,7 +168,7 @@
 								<h3>
 							<?php endif; ?>
 							<input type="hidden" name="gmt_courses_lesson_order[]" value="<?php echo $lesson->ID; ?>">
-							&varr; <?php echo $lesson->post_title; ?>
+							&varr; <a href="post.php?post=<?php echo $lesson->ID; ?>&action=edit"><?php echo $lesson->post_title; ?></a>
 							<?php if ( $type === 'module' ) : ?>
 								</h3>
 							<?php endif; ?>

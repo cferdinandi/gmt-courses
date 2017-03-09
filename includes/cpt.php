@@ -31,14 +31,14 @@
 			// 'query_var' => false,
 			// 'menu_position' => 5,
 			'menu_icon'     => 'dashicons-controls-play',
-			// 'hierarchical'  => false,
+			'hierarchical'  => true,
 			'supports'      => array(
 				'title',
 				'editor',
 				// 'thumbnail',
 				'excerpt',
 				'revisions',
-				// 'page-attributes',
+				'page-attributes',
 				'wpcom-markdown',
 			),
 			'rewrite' => array(

@@ -124,6 +124,12 @@
 
 			<fieldset>
 
+				<label>
+					<input type="radio" name="gmt_courses_course" value="0" <?php if ( empty( $the_course ) ) { echo 'checked="checked"'; } ?>>
+					<?php _e( 'None', 'gmt_courses' ); ?>
+				</label>
+				<br>
+
 				<?php foreach( $courses as $course ) : ?>
 
 					<label>

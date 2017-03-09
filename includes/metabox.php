@@ -63,6 +63,7 @@
 		$types = array(
 			'lesson' => __( 'Lesson', 'gmt_courses' ),
 			'module' => __( 'Module', 'gmt_courses' ),
+			'course' => __( 'Course', 'gmt_courses' ),
 		);
 
 		return apply_filters( 'gmt_courses_get_lesson_types', $types );
